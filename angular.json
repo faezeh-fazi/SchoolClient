@@ -24,7 +24,6 @@
               "src/assets"
             ],
             "styles": [
-
               "node_modules/font-awesome/css/font-awesome.min.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/ngx-toastr/toastr.css",
@@ -33,7 +32,6 @@
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/bootstrap/dist/js/bootstrap.min.js"
-
             ]
           },
           "configurations": {
@@ -128,5 +126,8 @@
       }
     }
   },
-  "defaultProject": "SchoolClient"
+  "defaultProject": "SchoolClient",
+  "cli": {
+    "analytics": false
+  }
 }
