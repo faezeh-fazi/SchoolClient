@@ -22,12 +22,17 @@ export interface IAddCourseToTimeTable {
   day: number;
 }
 
+
 export interface ICourse {
   courseName: string;
   courseDescription: string;
   startDate: string;
+  startTime: string;
+  endTime: string;
   endDate: string;
   department: string;
+  courseId: number;
+  day: number;
 }
 export interface IResponseCourse {
   courses: Array<ICourse>;
@@ -49,4 +54,12 @@ export interface IEditTimeTable {
 }
 export interface IDeleteTimeTable {
   TimeTableId: number;
+}
+
+export interface ICourseView {
+  courseDescription: string;
+  courseName: string;
+  day: string;
+  endTime: string;
+  startTime: string;
 }

@@ -1,0 +1,206 @@
+<p class="display-4">
+  <a (click)="back()" class="text-dark">
+    <i class="fa fa-angle-double-left" aria-hidden="true"></i>
+  </a>
+</p>
+<div class="card shadow mb-4 border-bottom-info">
+  <div class="card-header py-3">
+    <h6 class="m-0 font-weight-bold text-primary">Course Details</h6>
+  </div>
+  <div class="card-body">
+    <ng-container *ngIf="!editmode">
+      <div class="row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"
+          >Course Id :
+        </label>
+        <div class="col-sm-10">
+          <label type="text" readonly class="form-control-plaintext">{{
+            courseId
+          }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 col-form-label">Course Name : </label>
+        <div class="col-sm-10">
+          <label type="text" readonly class="form-control-plaintext">
+            {{ course?.courseName }}
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 col-form-label">courseDescription : </label>
+      </div>
+      <div class="row">
+        <div class="col-sm-10">
+          <textarea
+            readonly
+            style="resize: none"
+            class="form-control-plaintext border text-dark"
+            value="{{ course?.courseDescription }}"
+          ></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 col-form-label">Start Time : </label>
+        <div class="col-sm-10">
+          <label type="text" readonly class="form-control-plaintext">{{
+            course?.startTime
+          }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 col-form-label">End Time : </label>
+        <div class="col-sm-10">
+          <label type="text" readonly class="form-control-plaintext">{{
+            course?.endTime
+          }}</label>
+        </div>
+      </div>
+      <div class="row">
+        <label class="col-sm-2 col-form-label">Day : </label>
+        <div class="col-sm-10">
+          <label type="text" readonly class="form-control-plaintext">{{
+            course?.day
+          }}</label>
+        </div>
+      </div>
+      <hr class="sidebar-divider" />
+      <div class="row">
+        <div class="col-sm-10">
+          <a
+            data-toggle="modal"
+            data-target="#deleteModal"
+            class="btn btn-danger btn-icon-split mr-3"
+          >
+            <span class="icon text-white-50">
+              <i class="fa fa-minus"></i>
+            </span>
+            <span class="text">Delete</span>
+          </a>
+          <a (click)="editmode = !editmode" class="btn btn-info btn-icon-split">
+            <span class="icon text-white-50">
+              <i class="fa fa-edit"></i>
+            </span>
+            <span class="text">Edit</span>
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="editmode">
+      <form (ngSubmit)="editCourse()" [formGroup]="editForm">
+        <div class="row">
+          <div class="col">
+            <input
+              type="text"
+              formControlName="courseName"
+              [class.is-invalid]="
+                editForm.get('courseName').errors &&
+                editForm.get('courseName').touched
+              "
+              class="form-control"
+              placeholder="Course Name"
+            />
+          </div>
+          <div class="col">
+            <input
+              type="text"
+              formControlName="courseDescription"
+              [class.is-invalid]="
+                editForm.get('courseDescription').errors &&
+                editForm.get('courseDescription').touched
+              "
+              class="form-control"
+              placeholder="Description"
+            />
+          </div>
+        </div>
+
+        <div class="row mt-2">
+          <div class="col">
+            <label for="Start-Date">Start Date:</label>
+            <input
+              formControlName="startDate"
+              [class.is-invalid]="
+                editForm.get('startDate').errors &&
+                editForm.get('startDate').touched
+              "
+              type="date"
+              class="form-control"
+              name="Start-Date"
+            />
+          </div>
+          <div class="col">
+            <label for="Start-Time">End Date:</label>
+            <input
+              formControlName="endDate"
+              [class.is-invalid]="
+                editForm.get('endDate').errors &&
+                editForm.get('endDate').touched
+              "
+              type="date"
+              class="form-control"
+              name="Start-Time"
+            />
+          </div>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col">
+            <button
+              type="submit"
+              [disabled]="editForm.status == 'INVALID'"
+              class="btn btn-success"
+            >
+              change
+            </button>
+          </div>
+          <div class="col">
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="editmode = !editmode"
+            >
+              cancle
+            </button>
+          </div>
+        </div>
+      </form>
+    </ng-container>
+  </div>
+</div>
+
+<!-- delete modal -->
+<div
+  class="modal fade"
+  id="deleteModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+        <button
+          class="close"
+          type="button"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <div class="modal-body">Are you sure ?</div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-dismiss="modal">
+          Cancel
+        </button>
+        <a (click)="deleteCourse()" data-dismiss="modal" class="btn btn-danger"
+          >Delet</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

@@ -27,7 +27,13 @@ import { EditFComponent } from './edit-f/edit-f.component';
 import { AdminPanelStudentsComponent } from './admin-panel-students/admin-panel-students.component';
 import { AdminPanelTeachersComponent } from './admin-panel-teachers/admin-panel-teachers.component';
 import { AdminPanelCoursesComponent } from './admin-panel-courses/admin-panel-courses.component';
-import { ProfileComponent } from './profile/profile.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { CoursesControllComponent } from './courses-controll/courses-controll.component';
+import { StudentControllComponent } from './student-controll/student-controll.component';
+import { TeacherControllComponent } from './teacher-controll/teacher-controll.component';
+import {NgxPaginationModule} from 'ngx-pagination';
+import { PagingDirective } from './paging.directive';
+import { StudentDetailsComponent } from './student-details/student-details.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +55,12 @@ import { ProfileComponent } from './profile/profile.component';
     AdminPanelStudentsComponent,
     AdminPanelTeachersComponent,
     AdminPanelCoursesComponent,
-    ProfileComponent,
+    UserProfileComponent,
+    CoursesControllComponent,
+    StudentControllComponent,
+    TeacherControllComponent,
+    PagingDirective,
+    StudentDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +73,7 @@ import { ProfileComponent } from './profile/profile.component';
     FontAwesomeModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
+    NgxPaginationModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

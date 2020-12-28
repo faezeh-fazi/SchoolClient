@@ -1,16 +1,21 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { faGlobe, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { ToastrService } from 'ngx-toastr';
+import { HttpService } from '../http.service';
 import {
-  IAddDepartment,
+  IAddCourse,
+  ICourse,
+  IResponseCourse,
+} from '../Interfaces/Course-interface';
+import {
   IDepartment,
-  IEditDepartment,
   IResponseDepartment,
 } from '../Interfaces/Department-interface';
+
 import { IPaging } from '../Interfaces/paging-interface';
-import { IResponseStundet, IStudent } from '../Interfaces/Students-interface';
 import { UserService } from '../user.service';
 
 @Component({
@@ -25,28 +30,31 @@ export class AdminPanelStudentsComponent implements OnInit {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
+    private router: Router,
     private userService: UserService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private httpService: HttpService
   ) {}
-  @ViewChild('edit_name') edit_name: ElementRef;
-  addForm: FormGroup;
-  departments: IStudent[];
+  base_url = this.httpService.base_url;
   pagingInfop: IPaging;
-  mode: boolean = true;
-  deletItem: string = null;
+  courses: ICourse[];
+  mode: boolean = false;
+  addForm: FormGroup;
   idtoken: string;
-  editMode: boolean = false;
-  editElement: number = null;
+  icon: IconDefinition;
+  departments: IDepartment[];
 
-  base_url = 'https://localhost:5001/';
   ngOnInit(): void {
-    this.s();
-    this.formAddInit();
-
+    this.GetallDepartments();
     this.get_Authorize();
   }
+  get_Authorize() {
+    this.userService.currentToken$.subscribe((res) => {
+      this.idtoken = res.token;
+    });
+  }
 
-  public s() {
+  public GetallDepartments() {
     this.route.queryParams.subscribe((obj) => {
       this.pagingInfop = {
         currentPages: !!obj['PageNumber'] ? +obj['PageNumber'] : 1,
@@ -60,10 +68,21 @@ export class AdminPanelStudentsComponent implements OnInit {
         .set('PageNumber', this.pagingInfop.currentPages.toString())
         .set('PageSize', this.pagingInfop.pageSize.toString());
       this.http
-        .get(this.base_url + 'GetAllDepartmentStudents', { params: paramss })
+        .get(this.base_url + 'GetAlldepartments', { params: paramss })
         .subscribe(
-          (response: IResponseStundet) => {
-            console.log(response)
+          (response: IResponseDepartment) => {
+            this.departments = response['departments'];
+            this.pagingInfop = response['pagingInfo'];
+            if (this.pagingInfop.totalPages < this.pagingInfop.currentPages) {
+              paramss.set('PageNumber', this.pagingInfop.totalPages.toString());
+              this.router.navigate([], {
+                relativeTo: this.route,
+                queryParams: {
+                  PageNumber: this.pagingInfop.totalPages,
+                  PageSize: this.pagingInfop.pageSize,
+                },
+              });
+            }
           },
           (error) => {
             console.log(error);
@@ -71,6 +90,7 @@ export class AdminPanelStudentsComponent implements OnInit {
         );
     });
   }
+
   counter(i: number) {
     let list = [];
     if (i - 3 > 0) {
@@ -86,81 +106,5 @@ export class AdminPanelStudentsComponent implements OnInit {
       list.push('..');
     }
     return list;
-  }
-
-  delete_item() {
-    this.http
-      .delete(this.base_url + 'deletedepartment/' + this.deletItem, {
-        headers: { Authorization: 'Bearer ' + this.idtoken },
-        responseType: 'text',
-      })
-      .subscribe({
-        next: (data) => {
-          console.log('Delete successful');
-          this.s();
-        },
-        error: (error) => {
-          console.log('There was an error!', error);
-        },
-      });
-  }
-
-  add_item() {
-    const name: IAddDepartment = {
-      name: this.addForm.get('name').value,
-    };
-    if (this.addForm.get('name').hasError) {
-      this.http
-        .post(this.base_url + 'AddDepartment', name, {
-          headers: { Authorization: 'Bearer ' + this.idtoken },
-          responseType: 'text',
-        })
-        .subscribe(
-          (response) => {
-            console.log(response);
-            this.mode = true;
-            this.toastr.success('Department has successfully added', 'added');
-            this.addForm.reset();
-          },
-          (error) => {
-            this.toastr.error(error.error, 'Error');
-            // console.log(error.error)
-          }
-        );
-    } else {
-      this.toastr.error('new value is not valid', 'Error');
-    }
-  }
-
-  formAddInit() {
-    this.addForm = new FormGroup({
-      name: new FormControl('', [Validators.required]),
-    });
-  }
-
-  get_Authorize() {
-    this.userService.currentToken$.subscribe((res) => {
-      this.idtoken = res.token;
-    });
-  }
-
-  editelm() {
-    const name: IEditDepartment = {
-      name: this.edit_name.nativeElement.value,
-    };
-    this.http
-      .put(this.base_url + 'updatedepartment/' + this.editElement, name, {
-        headers: { Authorization: 'Bearer ' + this.idtoken },
-      })
-      .subscribe(
-        (response) => {
-          this.toastr.success('Department has successfully Edited', 'Edited');
-          this.s();
-        },
-        (error) => {
-          this.toastr.error(error.error, 'Error');
-          console.log(error.error);
-        }
-      );
   }
 }

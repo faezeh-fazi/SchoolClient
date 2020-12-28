@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { HttpService } from '../http.service';
 import {
   IAddCourse,
   ICourse,
@@ -25,17 +26,18 @@ export class AdminPanelCoursesComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private userService: UserService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private httpService: HttpService
   ) {}
 
-  base_url = 'https://localhost:5001/';
+  base_url = this.httpService.base_url;
   pagingInfop: IPaging;
   courses: ICourse[];
   mode: boolean = false;
   addForm: FormGroup;
   idtoken: string;
   ngOnInit(): void {
-    this.GetallDepartments();
+    this.GetallCourses();
     this.formAddInit();
     this.get_Authorize();
   }
@@ -97,7 +99,7 @@ export class AdminPanelCoursesComponent implements OnInit {
     }
   }
 
-  public GetallDepartments() {
+  public GetallCourses() {
     this.route.queryParams.subscribe((obj) => {
       this.pagingInfop = {
         currentPages: !!obj['PageNumber'] ? +obj['PageNumber'] : 1,
